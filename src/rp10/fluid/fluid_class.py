@@ -10,6 +10,8 @@ from src.rp10.fluid.fluid_error_class import FluidRP10Error
 from src.rp10.fluid.fluid_properties_class import RP10FluidData
 from src.rp10.units_converters import converters as conv
 
+alphabet=set('абвгдеёжзийклмнопрстуфхцчшщъыьэюя')
+
 # max number of components in a mixture of fluids acceptable for RefProp 10
 component_number_max = 20
 
@@ -21,6 +23,14 @@ component_number_max = 20
 current_dir = Path(__file__)
 project_dir = [p for p in current_dir.parents if p.parts[-1]=='refprop'][0]
 refprop_lib_path = str(project_dir) + r"\rp10_lib"
+
+# не должно быть кир.символов и пробелов в пути к библ. rp10_lib
+if not alphabet.isdisjoint(refprop_lib_path.lower()):
+    print(f'Cyrillic symbols are in {refprop_lib_path} - path to rp10_lib')
+    sys.exit('critical error in fluid_class.py, str. 25')
+if refprop_lib_path.find(" ") != -1:
+    print(f'Space-symbol is in {refprop_lib_path} - path to rp10_lib')
+    sys.exit('critical error in fluid_class.py, str. 25')
 
 os.environ['RPPREFIX'] = refprop_lib_path
 r = ct.REFPROPFunctionLibrary(os.environ['RPPREFIX'], 'dll')
